@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catch the Hearts 💖</title>
+  <style>
+    :root {
+      --dark-pink: #CD2C58;
+      --medium-pink: #E06B80;
+      --light-pink: #FFC69D;
+      --cream: #FFE6D4;
+      --white: #FEF2F4;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, var(--medium-pink), var(--light-pink));
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      position: relative;
+    }
+
+    h1 {
+      color: var(--white);
+      text-shadow: 2px 2px var(--dark-pink);
+      margin-top: 20px;
+      font-family: 'Pacifico', cursive;
+    }
+
+    #game-area {
+      position: relative;
+      width: 100%;
+      height: 80vh;
+      overflow: hidden;
+    }
+
+    #basket {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 40px;
+      cursor: grab;
+    }
+
+    .heart {
+      position: absolute;
+      top: -30px;
+      font-size: 30px;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(90vh);
+      }
+    }
+
+    #score {
+      font-size: 1.2rem;
+      color: var(--white);
+      margin-top: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8px 20px;
+      border-radius: 10px;
+    }
+
+    #game-over {
+      display: none;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: var(--white);
+      background: rgba(0, 0, 0, 0.5);
+      padding: 25px 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px var(--light-pink);
+    }
+
+    #game-over h2 {
+      margin-bottom: 10px;
+      font-family: 'Pacifico', cursive;
+    }
+
+    #restart-btn {
+      background-color: var(--dark-pink);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #restart-btn:hover {
+      background-color: var(--light-pink);
+      color: var(--dark-pink);
+    }
+
+    /* Falling emoji background */
+    .emoji {
+      position: fixed;
+      top: -20px;
+      font-size: 22px;
+      opacity: 0.8;
+      animation: fallEmoji linear forwards;
+      pointer-events: none;
+    }
+
+    @keyframes fallEmoji {
+      from {
+        transform: translateY(0) rotate(0deg);
+      }
+      to {
+        transform: translateY(100vh) rotate(360deg);
+      }
+    }
+
+    @media (max-width: 600px) {
+      #basket {
+        font-size: 32px;
+      }
+      .heart {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>💖 Catch the Hearts 💖</h1>
+  <div id="score">Score: 0</div>
+
+  <div id="game-area">
+    <div id="basket">🧺</div>
+  </div>
+
+  <div id="game-over">
+    <h2>🎉 Great job! 🎉</h2>
+    <p>Your final score: <span id="final-score"></span></p>
+    <button id="restart-btn">Play Again</button>
+  </div>
+
+  <script>
+    // Emoji background animation
+    const emojis = ["💖", "🎈", "✨", "🩷"];
+    setInterval(() => {
+      const emoji = document.createElement("div");
+      emoji.classList.add("emoji");
+      emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      emoji.style.left = Math.random() * 100 + "vw";
+      emoji.style.animationDuration = Math.random() * 3 + 3 + "s";
+      document.body.appendChild(emoji);
+      setTimeout(() => emoji.remove(), 6000);
+    }, 500);
+
+    const gameArea = document.getElementById("game-area");
+    const basket = document.getElementById("basket");
+    const scoreDisplay = document.getElementById("score");
+    const gameOverScreen = document.getElementById("game-over");
+    const finalScore = document.getElementById("final-score");
+    const restartBtn = document.getElementById("restart-btn");
+
+    let score = 0;
+    let gameRunning = true;
+
+    // Move basket with mouse or touch
+    gameArea.addEventListener("mousemove", (e) => {
+      basket.style.left = e.clientX - basket.offsetWidth / 2 + "px";
+    });
+
+    gameArea.addEventListener("touchmove", (e) => {
+      const touch = e.touches[0];
+      basket.style.left = touch.clientX - basket.offsetWidth / 2 + "px";
+    });
+
+    // Create hearts
+    function createHeart() {
+      if (!gameRunning) return;
+
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.textContent = "🎂";
+      heart.style.left = Math.random() * (window.innerWidth - 30) + "px";
+      heart.style.animationDuration = Math.random() * 2 + 3 + "s";
+
+      gameArea.appendChild(heart);
+
+      const fallInterval = setInterval(() => {
+        const heartRect = heart.getBoundingClientRect();
+        const basketRect = basket.getBoundingClientRect();
+
+        if (
+          heartRect.bottom >= basketRect.top &&
+          heartRect.left >= basketRect.left &&
+          heartRect.right <= basketRect.right
+        ) {
+          score++;
+          scoreDisplay.textContent = "Score: " + score;
+          heart.remove();
+          clearInterval(fallInterval);
+        }
+
+        if (heartRect.top > window.innerHeight) {
+          heart.remove();
+          clearInterval(fallInterval);
+        }
+      }, 50);
+
+      setTimeout(createHeart, Math.random() * 1000 + 500);
+    }
+
+    // Game timer
+    setTimeout(() => {
+      gameRunning = false;
+      gameOverScreen.style.display = "block";
+      finalScore.textContent = score;
+    }, 30000); // 30 seconds game
+
+    restartBtn.addEventListener("click", () => {
+      location.reload();
+    });
+
+    createHeart();
+  </script>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory Match Game 💖</title>
+  <style>
+    :root {
+      --dark-pink: #CD2C58;
+      --medium-pink: #E06B80;
+      --light-pink: #FFC69D;
+      --cream: #FFE6D4;
+      --white: #FEF2F4;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, var(--medium-pink), var(--light-pink));
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      color: var(--white);
+      text-shadow: 2px 2px var(--dark-pink);
+      margin: 20px;
+      font-family: 'Pacifico', cursive;
+      font-size: 2.2rem;
+      text-align: center;
+    }
+
+    .game-container {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      grid-gap: 15px;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .card {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      perspective: 600px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .card-front {
+      background-color: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--dark-pink);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background-size: cover;
+      background-position: center;
+    }
+
+    #status {
+      margin-top: 15px;
+      background: rgba(255, 255, 255, 0.3);
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    /* Game Over */
+    #game-over {
+      display: none;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: var(--white);
+      padding: 30px 50px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 0 15px var(--light-pink);
+    }
+
+    #game-over h2 {
+      font-family: 'Pacifico', cursive;
+      margin-bottom: 10px;
+    }
+
+    #restart-btn {
+      background: var(--dark-pink);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #restart-btn:hover {
+      background: var(--light-pink);
+      color: var(--dark-pink);
+    }
+
+    /* Falling emojis */
+    .emoji {
+      position: fixed;
+      top: -20px;
+      font-size: 22px;
+      opacity: 0.8;
+      animation: fall linear forwards;
+      pointer-events: none;
+    }
+
+    @keyframes fall {
+      from { transform: translateY(0) rotate(0deg); }
+      to { transform: translateY(100vh) rotate(360deg); }
+    }
+
+    @media (max-width: 600px) {
+      .game-container {
+        grid-template-columns: repeat(4, 70px);
+        grid-gap: 10px;
+      }
+      .card {
+        width: 70px;
+        height: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>💖 Memory Match Game 💖</h1>
+  <div id="status">Moves: <span id="moves">0</span></div>
+
+  <div class="game-container" id="game"></div>
+
+  <div id="game-over">
+    <h2>🎉 You Did It! 🎉</h2>
+    <p>Total Moves: <span id="final-moves"></span></p>
+    <button id="restart-btn">Play Again</button>
+  </div>
+
+  <script>
+    // Emoji background
+    const emojis = ["💖", "🎈", "✨", "🩷"];
+    setInterval(() => {
+      const emoji = document.createElement("div");
+      emoji.classList.add("emoji");
+      emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      emoji.style.left = Math.random() * 100 + "vw";
+      emoji.style.animationDuration = Math.random() * 3 + 3 + "s";
+      document.body.appendChild(emoji);
+      setTimeout(() => emoji.remove(), 6000);
+    }, 500);
+
+    const gameContainer = document.getElementById("game");
+    const movesDisplay = document.getElementById("moves");
+    const gameOverScreen = document.getElementById("game-over");
+    const finalMoves = document.getElementById("final-moves");
+    const restartBtn = document.getElementById("restart-btn");
+
+    // Replace with your own images (8 unique pairs)
+    const images = [
+      "55.jpeg", "56.jpeg", "57.jpeg", "58.jpeg",
+      "59.jpeg", "60.jpeg", "61.jpeg", "62.jpeg"
+    ];
+
+    let cards = [...images, ...images]; // duplicate for pairs
+    cards.sort(() => 0.5 - Math.random());
+
+    let firstCard = null;
+    let secondCard = null;
+    let lockBoard = false;
+    let matched = 0;
+    let moves = 0;
+
+    // Create cards
+    cards.forEach((imgSrc) => {
+      const card = document.createElement("div");
+      card.classList.add("card");
+
+      const cardInner = document.createElement("div");
+      cardInner.classList.add("card-inner");
+
+      const cardFront = document.createElement("div");
+      cardFront.classList.add("card-front");
+      cardFront.textContent = "💞";
+
+      const cardBack = document.createElement("div");
+      cardBack.classList.add("card-back");
+      cardBack.style.backgroundImage = `url(${imgSrc})`;
+
+      cardInner.appendChild(cardFront);
+      cardInner.appendChild(cardBack);
+      card.appendChild(cardInner);
+      gameContainer.appendChild(card);
+
+      card.addEventListener("click", () => flipCard(cardInner, imgSrc));
+    });
+
+    function flipCard(card, imgSrc) {
+      if (lockBoard || card.classList.contains("flipped")) return;
+
+      card.classList.add("flipped");
+      if (!firstCard) {
+        firstCard = { card, imgSrc };
+      } else {
+        secondCard = { card, imgSrc };
+        checkMatch();
+      }
+    }
+
+    function checkMatch() {
+      moves++;
+      movesDisplay.textContent = moves;
+
+      if (firstCard.imgSrc === secondCard.imgSrc) {
+        matched += 2;
+        resetBoard();
+        if (matched === cards.length) {
+          setTimeout(() => {
+            gameOverScreen.style.display = "block";
+            finalMoves.textContent = moves;
+          }, 800);
+        }
+      } else {
+        lockBoard = true;
+        setTimeout(() => {
+          firstCard.card.classList.remove("flipped");
+          secondCard.card.classList.remove("flipped");
+          resetBoard();
+        }, 1000);
+      }
+    }
+
+    function resetBoard() {
+      [firstCard, secondCard] = [null, null];
+      lockBoard = false;
+    }
+
+    restartBtn.addEventListener("click", () => location.reload());
+  </script>
+</body>
+</html>

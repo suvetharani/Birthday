@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Messages 💌</title>
+  <style>
+    :root {
+      --dark-pink: #CD2C58;
+      --medium-pink: #E06B80;
+      --light-pink: #FFC69D;
+      --cream: #FFE6D4;
+      --white: #FEF2F4;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, var(--medium-pink), var(--light-pink));
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      color: var(--white);
+      margin-top: 30px;
+      font-family: 'Pacifico', cursive;
+      text-shadow: 2px 2px var(--dark-pink);
+      font-size: 2.2rem;
+      text-align: center;
+    }
+
+    /* Emoji falling animation */
+    .emoji {
+      position: fixed;
+      top: -20px;
+      font-size: 24px;
+      opacity: 0.8;
+      animation: fall linear forwards;
+      z-index: 0;
+    }
+
+    @keyframes fall {
+      from { transform: translateY(0) rotate(0deg); }
+      to { transform: translateY(100vh) rotate(360deg); }
+    }
+
+    /* Message container */
+    .messages {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 90%;
+      max-width: 800px;
+      margin: 40px auto 60px;
+      z-index: 2;
+    }
+
+    .card {
+      background: rgba(255, 230, 212, 0.85);
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      margin: 15px 0;
+      width: 100%;
+      text-align: center;
+      backdrop-filter: blur(6px);
+      border: 2px solid var(--white);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h3 {
+      color: var(--dark-pink);
+      margin-bottom: 8px;
+      font-family: 'Pacifico', cursive;
+      font-size: 1.4rem;
+    }
+
+    .card p {
+      color: #4a2f2f;
+      font-size: 1rem;
+      line-height: 1.6;
+      text-align: justify;
+
+    }
+
+    .heart {
+      color: var(--medium-pink);
+      font-size: 1.3rem;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.8rem; }
+      .card h3 { font-size: 1.2rem; }
+      .card p { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+  <h1>💌 Birthday Wishes 💌</h1>
+
+  <div class="messages">
+    <div class="card">
+      <h3>From Suvetha 💖</h3>
+      <p style="font-family: 'Pacifico', cursive">
+        Happy Birthday to the most wonderful person! 🎉  
+        unkitta neraya sollanum aana nama than eppovume call la ye pesidurome😂.
+        I'm the most blessed one to have you as my friend😽. Nee adikadi call pannuva romba neram pesuvom, I hope future la yum 
+        ipdiye irukanum. Naan unaku call panna matren nu thappa nenachikatha, naan hostel la iruntha I can't able to speak for some reasons.
+        And nee eppo vena call pannu, I'll always be there for you🤝. Enna problem vanthalum samaalika kathuko. Un life ah nee than paathukanum.
+        Please be Bold💪, romba emotional aagatha. Ellathayum face pannu, unakaga illanalum enakaga pannu. Una pathi naan adikadi veetla pesite irupen, 
+        even naan pesalana koda en veetla unna pathi than kepanga😂. Enga veetla ellarukum unna pudikum, unna maari friend kedaika Naan
+        kuduthu vachirukanum nu solluvanga😁. Vera enna solrathunu theriyala😹. eppovum happy iru avlo than, adikadi azhugatha avlo than😄
+        <span class="heart">🩷</span>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Emoji fall animation
+    const emojis = ["💖", "🎈", "✨", "🩷"];
+    setInterval(() => {
+      const emoji = document.createElement("div");
+      emoji.classList.add("emoji");
+      emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      emoji.style.left = Math.random() * 100 + "vw";
+      emoji.style.animationDuration = Math.random() * 3 + 3 + "s";
+      document.body.appendChild(emoji);
+      setTimeout(() => emoji.remove(), 6000);
+    }, 400);
+  </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday 🎂</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ========== Global Styles ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #D14D72, #FFABAB, #FFC69D, #FFE6D4);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      text-align: center;
+      overflow: hidden;
+      cursor: pointer;
+      animation: fadeIn 2s ease-in;
+    }
+
+    h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 3rem;
+      color: #fff;
+      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+      margin-bottom: 10px;
+      animation: slideUp 2s ease forwards;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+      color: #FEF2F4;
+      margin-bottom: 30px;
+      animation: fadeIn 3s ease forwards;
+    }
+
+    .hint {
+      font-size: 1rem;
+      color: #FFE6D4;
+      opacity: 0.8;
+      margin-top: 50px;
+      animation: blink 2s infinite;
+    }
+
+    /* ========== Animations ========== */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* ========== Floating Hearts ========== */
+    .hearts {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .hearts span {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 18px;
+      animation: float 6s linear infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* ========== Responsive Design ========== */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      h2 {
+        font-size: 1rem;
+      }
+      .hint {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body onclick="goToHome()">
+  <div class="hearts"></div>
+
+  <h1>Aarambikalama...😁🎀</h1>
+  <div class="hint">✨ Click anywhere to begin ✨</div>
+
+  <script>
+    // Floating hearts generator
+    const heartsContainer = document.querySelector('.hearts');
+    for (let i = 0; i < 25; i++) {
+      const heart = document.createElement('span');
+      heart.innerHTML = '💖';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDelay = Math.random() * 5 + 's';
+      heartsContainer.appendChild(heart);
+    }
+
+    // Redirect on click
+    function goToHome() {
+      window.location.href = "home.html";
+    }
+  </script>
+</body>
+</html>
